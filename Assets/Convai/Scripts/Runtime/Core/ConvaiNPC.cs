@@ -119,6 +119,11 @@ namespace Convai.Scripts
 
         private void Awake()
         {
+            if(SelectAiManager.instance != null)
+            {
+                characterName = SelectAiManager.instance.CharacterAiName;
+                characterID = SelectAiManager.instance.CharacterAiCode;
+            }
             Logger.Info("Initializing ConvaiNPC : " + characterName, Logger.LogCategory.Character);
             InitializeComponents();
             Logger.Info("ConvaiNPC component initialized", Logger.LogCategory.Character);
