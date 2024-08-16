@@ -88,6 +88,7 @@ namespace Convai.Scripts.Utils
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+
         private void MovePlayer()
         {
             Vector3 horizontalMovement = Vector3.zero;
