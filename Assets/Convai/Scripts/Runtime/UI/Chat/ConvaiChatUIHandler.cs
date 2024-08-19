@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -72,6 +73,8 @@ namespace Convai.Scripts.Utils
 
         public Dictionary<UIType, IChatUI> GetUIAppearances { get; } = new();
 
+        public string My_PlayerName;
+
         private void Awake()
         {
             if (Instance != null)
@@ -88,8 +91,13 @@ namespace Convai.Scripts.Utils
 
             ValidateUIPrefabs();
             InitializeUIStrategies();
-        }
 
+            if(Geekplay.Instance != null)
+            {
+                playerName = Geekplay.Instance.PlayerData.PlayerName;
+            }
+            //StartCoroutine(SendCharOpening());
+        }
         // Subscribe to events when this component is enabled.
         private void OnEnable()
         {

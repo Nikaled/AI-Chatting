@@ -19,6 +19,12 @@ namespace Convai.Scripts.Utils
         private Speaker _currentSpeaker;
         private bool _isFirstMessage = true;
 
+        public ChatBlock PlayerChatBlock;
+        public ChatBlock CharacterChatBlock;
+        public static ChatBoxUI instance;
+
+        private ChatBlock _currentPlayerChatBlock;
+        private ChatBlock _currentCharacterChatBlock;
         /// <summary>
         ///     Initializes the chat UI with the specified prefab.
         /// </summary>
@@ -30,6 +36,15 @@ namespace Convai.Scripts.Utils
             _textObject = _chatPanel.transform.GetChild(0).gameObject;
             _chatScrollRect = UIInstance.transform.GetChild(0).GetChild(0).GetComponent<ScrollRect>();
             UIInstance.SetActive(false);
+            instance = this;
+            if(SelectAiManager.instance != null)
+            {
+                if (SelectAiManager.instance.CharOpening != null && SelectAiManager.instance.name != null)
+                {
+                    CreateNewMessage(SelectAiManager.instance.CharOpening, SelectAiManager.instance.CharacterAiName, Color.red);
+                }
+            }
+            
         }
 
         /// <summary>
@@ -153,6 +168,7 @@ namespace Convai.Scripts.Utils
             Message lastMessage = _messageList[^1];
             lastMessage.Text = text;
             lastMessage.TextObject.text = FormatDialogueText(playerName, text, playerTextColor);
+            _currentPlayerChatBlock.TextInside.text = text;
         }
 
 
@@ -167,6 +183,8 @@ namespace Convai.Scripts.Utils
                 Message lastMessage = _messageList[^1];
                 lastMessage.Text += " " + text;
                 lastMessage.TextObject.text += " " + text;
+                _currentCharacterChatBlock.TextInside.text = lastMessage.TextObject.text;
+
             }
         }
 
@@ -190,7 +208,7 @@ namespace Convai.Scripts.Utils
         private static string FormatDialogueText(string speakerName, string text, Color speakerColor)
         {
             string speakerColorHtml = ColorUtility.ToHtmlStringRGB(speakerColor);
-            return $"<b><color=#{speakerColorHtml}>{speakerName}</color></b>: {text}";
+            return $"{text}";
         }
 
 
@@ -220,8 +238,26 @@ namespace Convai.Scripts.Utils
 
             // If the speaker is the player, disable the feedback icon
             GameObject feedbackButtons = newMessage.TextObject.transform.GetChild(0).gameObject;
-            feedbackButtons.SetActive(_currentSpeaker == Speaker.Character);
+            //feedbackButtons.SetActive(_currentSpeaker == Speaker.Character);
+            feedbackButtons.SetActive(false);
 
+            //Destroy(newMessage.TextObject);
+            if(_currentSpeaker == Speaker.Character)
+            {
+                var CurrentChatBlock = Instantiate(CharacterChatBlock, _chatPanel.transform);
+                CurrentChatBlock.transform.position += new Vector3(-50, 0);
+                CurrentChatBlock.TextInside.text = text;
+                _currentCharacterChatBlock = CurrentChatBlock;
+                newMessage.TextObject = CurrentChatBlock.TextInside;
+            }
+            else
+            {
+                var CurrentChatBlock = Instantiate(PlayerChatBlock, _chatPanel.transform);
+                CurrentChatBlock.TextInside.text = text;
+                _currentPlayerChatBlock = CurrentChatBlock;
+                newMessage.TextObject = CurrentChatBlock.TextInside;
+                CurrentChatBlock.transform.position += new Vector3(50, 0);
+            }
             newMessage.TextObject.text = FormatDialogueText(speakerName, text, speakerColor);
             _messageList.Add(newMessage);
         }

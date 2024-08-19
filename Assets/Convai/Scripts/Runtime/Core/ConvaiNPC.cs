@@ -80,6 +80,7 @@ namespace Convai.Scripts
         private bool _stopHandlingInput;
         public ActionConfig ActionConfig;
 
+        public static ConvaiNPC instance;
         private bool IsInConversationWithAnotherNPC
         {
             get
@@ -171,6 +172,7 @@ namespace Convai.Scripts
 
         private void OnEnable()
         {
+            instance = this;
             AudioManager.OnCharacterTalkingChanged += HandleIsCharacterTalkingAnimation;
             AudioManager.OnAudioTranscriptAvailable += HandleAudioTranscriptAvailable;
             AudioManager.OnCharacterTalkingChanged += SetCharacterTalking;
